@@ -1,1 +1,81 @@
 // app global css in SCSS form
+
+// Add custom fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+
+// Global styles
+body {
+  font-family: 'Inter', sans-serif;
+  background: $dark-page;
+  color: white;
+}
+
+// Smooth scrolling
+html {
+  scroll-behavior: smooth;
+}
+
+// Card hover effects
+.q-card {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+// Button hover effects
+.q-btn {
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $dark-page;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $primary;
+  border-radius: 4px;
+}
+
+// Text colors
+.text-grey-5 {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+// Gradient text
+.gradient-text {
+  background: linear-gradient(45deg, $gradient-start, $gradient-end);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-section {
+  .hero-image {
+    animation: float 6s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
