@@ -13,19 +13,10 @@
           </div>
 
           <div class="row items-center q-gutter-x-lg">
-            <q-btn
-              flat
-              class="nav-btn q-px-md"
-              :class="{ 'active-nav': $route.path === '/past-hackathons' }"
-              to="/past-hackathons"
-            >
+            <q-btn flat class="nav-btn q-px-md" @click="scrollToSection('past-hackathons')">
               <div class="column items-center">
                 <span class="text-subtitle1 text-weight-medium">Past Events</span>
               </div>
-            </q-btn>
-
-            <q-btn flat class="nav-btn" to="/">
-              <div class="column items-center"></div>
             </q-btn>
 
             <q-btn
@@ -33,6 +24,7 @@
               class="gradient-btn"
               label="Upcoming Events"
               icon-right="arrow_forward"
+              @click="scrollToSection('upcoming-hackathons')"
             />
           </div>
         </div>
@@ -45,7 +37,26 @@
   </q-layout>
 </template>
 
-<script setup></script>
+<script setup>
+const scrollToSection = (sectionId) => {
+  // Only scroll if we're on the index page
+  if (window.location.hash === '#/' || window.location.hash === '') {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  } else {
+    // If not on index page, navigate to index and then scroll
+    window.location.href = '/#/'
+    setTimeout(() => {
+      const element = document.getElementById(sectionId)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    }, 100)
+  }
+}
+</script>
 
 <style lang="scss" scoped>
 .gradient-btn {

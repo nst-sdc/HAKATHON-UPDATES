@@ -26,7 +26,7 @@
     </section>
 
     <!-- Updates Grid -->
-    <div class="q-pa-xl updates-grid">
+    <div id="upcoming-hackathons" class="q-pa-xl updates-grid">
       <div class="row q-col-gutter-xl">
         <!-- New Update Card -->
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
@@ -57,7 +57,7 @@
       </div>
     </div>
 
-    <div class="past-hackathons q-pa-xl">
+    <div id="past-hackathons" class="past-hackathons q-pa-xl">
       <h2 class="text-h4 text-weight-bold text-white q-mb-xl">Past Hackathons</h2>
 
       <div class="row q-col-gutter-xl">
