@@ -8,7 +8,7 @@
               <img src="src/assets/logo (1).png" alt="Logo" />
             </q-avatar>
             <div class="hacathor-container q-ml-xl">
-              <span span class="thor">HACAthor</span>
+              <span class="glowing-text">HACAthor</span>
             </div>
           </div>
 
@@ -59,6 +59,28 @@ const scrollToSection = (sectionId) => {
 </script>
 
 <style lang="scss" scoped>
+.glowing-text {
+  font-size: 2.5rem;
+  font-weight: 900;
+  font-family: 'Orbitron', sans-serif;
+  color: #ff8f3c;
+  text-shadow: 0 0 5px rgba(255, 143, 60, 0.6),
+               0 0 10px rgba(255, 143, 60, 0.4);
+  letter-spacing: 1px;
+  animation: subtleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes subtleGlow {
+  from {
+    text-shadow: 0 0 4px rgba(255, 143, 60, 0.5),
+                 0 0 8px rgba(255, 143, 60, 0.3);
+  }
+  to {
+    text-shadow: 0 0 6px rgba(255, 143, 60, 0.6),
+                 0 0 12px rgba(255, 143, 60, 0.4);
+  }
+}
+
 .gradient-btn {
   background: linear-gradient(45deg, $gradient-start, $gradient-end);
   border-radius: 25px;
