@@ -263,10 +263,62 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { collection, getDocs, addDoc } from "firebase/firestore";
+import { db } from "../../firebase";
+import { onMounted, ref } from "vue";
+
+const pastHackathons = ref([]);
+
+async function loadHackathonsFromFirestore() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "hackathons"));
+    pastHackathons.value = querySnapshot.docs.map((doc) => doc.data());
+    console.log("Hackathons loaded from Firestore!");
+  } catch (error) {
+    console.error("Error loading hackathons: ", error);
+  }
+}
+
+onMounted(() => {
+  loadHackathonsFromFirestore();
+});
+
+async function onSubmitHackathon() {
+  const imageUrls = Array.from(newHackathon.value.images).map((file) =>
+    URL.createObjectURL(file)
+  );
+
+  const hackathonData = {
+    ...newHackathon.value,
+    images: imageUrls,
+    id: Date.now(),
+    status: "completed",
+    winners: [],
+  };
+
+  try {
+    await addDoc(collection(db, "hackathons"), hackathonData);
+    console.log("Hackathon added to Firestore!");
+  } catch (error) {
+    console.error("Error adding hackathon: ", error);
+  }
+
+  pastHackathons.value.push(hackathonData);
+
+  newHackathon.value = {
+    title: "",
+    description: "",
+    category: "",
+    date: "",
+    location: "",
+    participantsCount: null,
+    images: [],
+  };
+  showAddHackathonDialog.value = false;
+}
 
 // Import your images at the top of the script
-import hackathonImage1 from 'src/assets/WhatsApp Image 2025-02-16 at 22.18.23.jpeg'  // adjust filename to match your actual file
+import hackathonImage1 from 'src/assets/WhatsApp Image 2025-02-16 at 22.18.23.jpeg';
 import hackathonImage2 from 'src/assets/WhatsApp Image 2025-02-16 at 22.18.24 (1).jpeg'  // adjust filename to match your actual file
 import hackathonImage3 from 'src/assets/WhatsApp Image 2025-02-16 at 22.18.24.jpeg'  // adjust filename to match your actual file
 import teamLogo1 from 'src/assets/WhatsApp Image 2024-08-30 at 22.32.46.jpeg'
@@ -384,28 +436,41 @@ function openAddHackathonDialog() {
   showAddHackathonDialog.value = true
 }
 
-function onSubmitHackathon() {
-  const imageUrls = Array.from(newHackathon.value.images).map((file) => URL.createObjectURL(file))
+
+
+async function onSubmitHackathon() {
+  const imageUrls = Array.from(newHackathon.value.images).map((file) =>
+    URL.createObjectURL(file)
+  );
 
   const hackathonData = {
     ...newHackathon.value,
     images: imageUrls,
     id: Date.now(),
-    status: 'completed'
+    status: "completed",
+    winners: [],
+  };
+
+  // Save to Firestore
+  try {
+    await addDoc(collection(db, "hackathons"), hackathonData);
+    console.log("Hackathon added to Firestore!");
+  } catch (error) {
+    console.error("Error adding hackathon: ", error);
   }
 
-  pastHackathons.value.push(hackathonData)
+  pastHackathons.value.push(hackathonData);
 
   newHackathon.value = {
-    title: '',
-    description: '',
-    category: '',
-    date: '',
-    location: '',
+    title: "",
+    description: "",
+    category: "",
+    date: "",
+    location: "",
     participantsCount: null,
-    images: []
-  }
-  showAddHackathonDialog.value = false
+    images: [],
+  };
+  showAddHackathonDialog.value = false;
 }
 </script>
 
