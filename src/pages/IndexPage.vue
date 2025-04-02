@@ -9,7 +9,7 @@
           <q-btn unelevated class="gradient-btn q-mt-md" label="Check out our updates!" size="lg" />
         </div>
         <div class="col-12 col-md-6 flex justify-center">
-          <img src="src/assets/Black_White_Retro_Y2K_Streetwear_Star_Logo-removebg-preview.png" class="hero-image"
+          <img src="https://png.pngtree.com/template/20220419/ourmid/pngtree-hackathon-background-screen-hack-synth-poster-image_1174636.jpg" class="hero-image"
             alt="Hackathon Logo" />
         </div>
       </div>
