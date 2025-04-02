@@ -4,7 +4,7 @@
     <div class="hero-section q-pa-xl">
       <div class="row justify-between items-center">
         <div class="col-12 col-md-6">
-          <h1 class="text-h2 text-weight-bold text-white">Hacathon Updates</h1>
+          <h1 class="text-h2 text-weight-bold text-white">Hackathon Updates</h1>
           <q-btn unelevated class="gradient-btn q-mt-md" label="Check out our updates!" size="lg" />
         </div>
         <div class="col-12 col-md-6 flex ">
@@ -35,7 +35,7 @@
               <div class="new-update-icon q-mb-sm">
                 <q-icon name="add" size="24px" class="text-primary" />
               </div>
-              <div class="text-h6 text-weight-bold text-white q-mb-sm">Hacathon updates!</div>
+              <div class="text-h6 text-weight-bold text-white q-mb-sm">Hackathon updates!</div>
               <div class="text-caption text-grey-5">
                 Keep track of all the latest updates and announcements
               </div>
@@ -61,7 +61,7 @@
       <h2 class="text-h4 text-weight-bold text-white q-mb-xl">Past Hackathons</h2>
 
       <div class="row q-col-gutter-xl">
-        <div v-for="hackathon in pastHackathons" :key="hackathon.id" class="col-12 q-mb-xl">
+        <div v-for="hackathon in hackathonsData" :key="hackathon.id" class="col-12 q-mb-xl">
           <q-card class="hackathon-card">
             <div class="row">
               <div class="col-12 col-md-6">
@@ -267,61 +267,15 @@ import { collection, getDocs, addDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { onMounted, ref } from "vue";
 
-const pastHackathons = ref([]);
-
-async function loadHackathonsFromFirestore() {
-  try {
-    const querySnapshot = await getDocs(collection(db, "hackathons"));
-    pastHackathons.value = querySnapshot.docs.map((doc) => doc.data());
-    console.log("Hackathons loaded from Firestore!");
-  } catch (error) {
-    console.error("Error loading hackathons: ", error);
-  }
-}
-
-onMounted(() => {
-  loadHackathonsFromFirestore();
-});
-
-async function onSubmitHackathon() {
-  const imageUrls = Array.from(newHackathon.value.images).map((file) =>
-    URL.createObjectURL(file)
-  );
-
-  const hackathonData = {
-    ...newHackathon.value,
-    images: imageUrls,
-    id: Date.now(),
-    status: "completed",
-    winners: [],
-  };
-
-  try {
-    await addDoc(collection(db, "hackathons"), hackathonData);
-    console.log("Hackathon added to Firestore!");
-  } catch (error) {
-    console.error("Error adding hackathon: ", error);
-  }
-
-  pastHackathons.value.push(hackathonData);
-
-  newHackathon.value = {
-    title: "",
-    description: "",
-    category: "",
-    date: "",
-    location: "",
-    participantsCount: null,
-    images: [],
-  };
-  showAddHackathonDialog.value = false;
-}
-
-// Import your images at the top of the script
+// Import your images 
 import hackathonImage1 from 'src/assets/WhatsApp Image 2025-02-16 at 22.18.23.jpeg';
-import hackathonImage2 from 'src/assets/WhatsApp Image 2025-02-16 at 22.18.24 (1).jpeg'  // adjust filename to match your actual file
-import hackathonImage3 from 'src/assets/WhatsApp Image 2025-02-16 at 22.18.24.jpeg'  // adjust filename to match your actual file
-import teamLogo1 from 'src/assets/WhatsApp Image 2024-08-30 at 22.32.46.jpeg'
+import hackathonImage2 from 'src/assets/WhatsApp Image 2025-02-16 at 22.18.24 (1).jpeg';
+import hackathonImage3 from 'src/assets/WhatsApp Image 2025-02-16 at 22.18.24.jpeg';
+import teamLogo1 from 'src/assets/WhatsApp Image 2024-08-30 at 22.32.46.jpeg';
+
+// Combined state for hackathons
+const hackathonsData = ref([]);
+
 const updates = ref([
   {
     title: 'Nano Lens Explorer',
@@ -347,17 +301,18 @@ const updates = ref([
     category: 'Finance',
     date: 'GD 17/04/23',
   },
-])
+]);
 
-const pastHackathons = ref([
+// Sample data for initial load
+const sampleHackathons = [
   {
     id: 1,
-    title: 'SMART INDIA HAKATHON 2024',
+    title: 'SMART INDIA HACKATHON 2024',
     description: 'The Smart India Hackathon (SIH) is a nationwide initiative by the Government of India to encourage innovation, problem-solving, and technological development among students. It provides a platform for young minds to solve real-world challenges faced by various government departments, industries, and organizations.',
     category: 'AI & Machine Learning',
     date: '2024-12-11',
     participantsCount: 20,
-    images: [hackathonImage1, hackathonImage2,hackathonImage3],  // Use imported images
+    images: [hackathonImage1, hackathonImage2, hackathonImage3],
     activeSlide: 0,
     canAddWinners: true,
     winners: [
@@ -367,36 +322,55 @@ const pastHackathons = ref([
         prize: '',
         teamLogo: teamLogo1
       },
-
     ]
   },
+];
 
-])
+async function loadHackathonsFromFirestore() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "hackathons"));
+    const firestoreHackathons = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      activeSlide: 0
+    }));
+    
+    // If we got data from Firestore, use it, otherwise use the sample data
+    hackathonsData.value = firestoreHackathons.length > 0 ? firestoreHackathons : sampleHackathons;
+    console.log("Hackathons loaded from Firestore!");
+  } catch (error) {
+    console.error("Error loading hackathons: ", error);
+    // Fallback to sample data if Firestore fails
+    hackathonsData.value = sampleHackathons;
+  }
+}
 
-const showAddWinnerDialog = ref(false)
-const selectedHackathonId = ref(null)
+onMounted(() => {
+  loadHackathonsFromFirestore();
+});
+
+const showAddWinnerDialog = ref(false);
+const selectedHackathonId = ref(null);
 const newWinner = ref({
   teamName: '',
   position: '',
   prize: '',
   teamLogo: null
-})
+});
 
 function openAddWinnerDialog(hackathonId) {
-  selectedHackathonId.value = hackathonId
-  showAddWinnerDialog.value = true
+  selectedHackathonId.value = hackathonId;
+  showAddWinnerDialog.value = true;
 }
 
 function onSubmitWinner() {
-
-  const hackathon = pastHackathons.value.find(h => h.id === selectedHackathonId.value)
+  const hackathon = hackathonsData.value.find(h => h.id === selectedHackathonId.value);
   if (hackathon) {
     hackathon.winners.push({
       teamName: newWinner.value.teamName,
       position: newWinner.value.position,
       prize: newWinner.value.prize,
       teamLogo: URL.createObjectURL(newWinner.value.teamLogo)
-    })
+    });
   }
 
   newWinner.value = {
@@ -404,8 +378,8 @@ function onSubmitWinner() {
     position: '',
     prize: '',
     teamLogo: null
-  }
-  showAddWinnerDialog.value = false
+  };
+  showAddWinnerDialog.value = false;
 }
 
 const categories = [
@@ -419,9 +393,9 @@ const categories = [
   'Data Science',
   'Cloud Computing',
   'AR/VR'
-]
+];
 
-const showAddHackathonDialog = ref(false)
+const showAddHackathonDialog = ref(false);
 const newHackathon = ref({
   title: '',
   description: '',
@@ -430,16 +404,14 @@ const newHackathon = ref({
   location: '',
   participantsCount: null,
   images: []
-})
+});
 
 function openAddHackathonDialog() {
-  showAddHackathonDialog.value = true
+  showAddHackathonDialog.value = true;
 }
 
-
-
 async function onSubmitHackathon() {
-  const imageUrls = Array.from(newHackathon.value.images).map((file) =>
+  const imageUrls = Array.from(newHackathon.value.images || []).map((file) =>
     URL.createObjectURL(file)
   );
 
@@ -449,6 +421,7 @@ async function onSubmitHackathon() {
     id: Date.now(),
     status: "completed",
     winners: [],
+    activeSlide: 0
   };
 
   // Save to Firestore
@@ -459,7 +432,7 @@ async function onSubmitHackathon() {
     console.error("Error adding hackathon: ", error);
   }
 
-  pastHackathons.value.push(hackathonData);
+  hackathonsData.value.push(hackathonData);
 
   newHackathon.value = {
     title: "",
@@ -468,7 +441,7 @@ async function onSubmitHackathon() {
     date: "",
     location: "",
     participantsCount: null,
-    images: [],
+    images: []
   };
   showAddHackathonDialog.value = false;
 }
